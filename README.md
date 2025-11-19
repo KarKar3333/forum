@@ -1,8 +1,9 @@
 # forum
 simple forum from flask 
 
-1. Подготовка окружения
-# Создайте виртуальное окружение
+#1. Подготовка окружения
+
+Создайте виртуальное окружение
 python -m venv venv
 
   Активируйте виртуальное окружение
@@ -11,18 +12,18 @@ python -m venv venv
   Linux/Mac:
     source venv/bin/activate
 
-2. Установка зависимостей
+#2. Установка зависимостей
    pip install -r requirements.txt
 
-3. Инициализация базы данных
+#3. Инициализация базы данных
    flask db init
    flask db migrate
    flask db upgrate
 
-4. Создание базы данных
+#4. Создание базы данных
   python create_sample_data.py
 
-5. запуск сайта
+#5. запуск сайта
      python run.py
 
 
