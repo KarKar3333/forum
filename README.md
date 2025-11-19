@@ -3,8 +3,8 @@ simple forum from flask
 
 #1. Подготовка окружения
 
-Создайте виртуальное окружение
-python -m venv venv
+  Создайте виртуальное окружение
+    python -m venv venv
 
   Активируйте виртуальное окружение
   Windows:
