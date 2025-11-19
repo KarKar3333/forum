@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title %}Мой профиль - Форум{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body text-center">
+                <!-- Аватарка -->
+                <div class="avatar-preview mb-3">
+                    <img src="{{ url_for('static', filename='avatars/' + current_user.avatar) }}"
+                         class="avatar-large" alt="Аватар пользователя">
+                </div>
+                
+                <h4>{{ current_user.username }}</h4>
+                {% if current_user.is_moderator %}
+                <span class="badge bg-warning mb-2">Модератор</span>
+                {% endif %}
+                <p class="text-muted">{{ current_user.email }}</p>
+                
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('edit_profile') }}" class="btn btn-primary">
+                        <i class="fas fa-edit me-1"></i>Редактировать профиль
+                    </a>
+                    <a href="{{ url_for('change_password') }}" class="btn btn-outline-secondary">
+                        <i class="fas fa-key me-1"></i>Сменить пароль
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-header">
+                <h6 class="mb-0"><i class="fas fa-chart-bar me-2"></i>Статистика</h6>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-6">
+                        <h5 class="text-primary">{{ current_user.get_thread_count() }}</h5>
+                        <small class="text-muted">Тем</small>
+                    </div>
+                    <div class="col-6">
+                        <h5 class="text-success">{{ current_user.get_post_count() }}</h5>
+                        <small class="text-muted">Сообщений</small>
+                    </div>
+                </div>
+                <hr>
+                <small class="text-muted">
+                    <i class="fas fa-calendar me-1"></i>
+                    Зарегистрирован: {{ current_user.created_at.strftime('%d.%m.%Y') }}
+                </small>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-info-circle me-2"></i>О себе</h5>
+            </div>
+            <div class="card-body">
+                {% if current_user.about %}
+                    <p class="card-text">{{ current_user.about|replace('\n', '<br>')|safe }}</p>
+                {% else %}
+                    <p class="text-muted">Информация о себе не указана.</p>
+                    <a href="{{ url_for('edit_profile') }}" class="btn btn-sm btn-outline-primary">
+                        Добавить информацию
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-history me-2"></i>Недавняя активность</h5>
+            </div>
+            <div class="card-body">
+                <h6>Последние темы:</h6>
+                {% if recent_threads %}
+                    <div class="list-group list-group-flush">
+                        {% for thread in recent_threads %}
+                        <a href="{{ url_for('thread', thread_id=thread.id) }}" 
+                           class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">{{ thread.title }}</h6>
+                                <small>{{ thread.created_at.strftime('%d.%m.%Y') }}</small>
+                            </div>
+                            <small class="text-muted">В разделе: {{ thread.section.name }}</small>
+                        </a>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted">Вы еще не создавали тем.</p>
+                {% endif %}
+                
+                <h6 class="mt-3">Последние сообщения:</h6>
+                {% if recent_posts %}
+                    <div class="list-group list-group-flush">
+                        {% for post in recent_posts %}
+                        <a href="{{ url_for('thread', thread_id=post.thread_id) }}" 
+                           class="list-group-item list-group-item-action">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h6 class="mb-1">{{ post.thread.title }}</h6>
+                                <small>{{ post.created_at.strftime('%d.%m.%Y') }}</small>
+                            </div>
+                            <p class="mb-1 text-muted">{{ post.content|truncate(100) }}</p>
+                        </a>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p class="text-muted">Вы еще не оставляли сообщений.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+
+{% block title %}{{ section.name }} - Форум{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1>{{ section.name }}</h1>
+        {% if section.description %}
+        <p class="text-muted mb-0">{{ section.description }}</p>
+        {% endif %}
+    </div>
+    <div class="d-flex gap-2">
+        <form method="GET" class="d-flex">
+            <select name="sort_by" class="form-select me-2" onchange="this.form.submit()">
+                <option value="updated_at_desc" {% if current_sort=='updated_at_desc' %}selected{% endif %}>
+                    Новые сначала
+                </option>
+                <option value="updated_at_asc" {% if current_sort=='updated_at_asc' %}selected{% endif %}>
+                    Старые сначала
+                </option>
+                <option value="title_asc" {% if current_sort=='title_asc' %}selected{% endif %}>
+                    По названию (А-Я)
+                </option>
+                <option value="title_desc" {% if current_sort=='title_desc' %}selected{% endif %}>
+                    По названию (Я-А)
+                </option>
+                <option value="post_count_desc" {% if current_sort=='post_count_desc' %}selected{% endif %}>
+                    По активности
+                </option>
+            </select>
+        </form>
+        
+        {% if current_user.is_authenticated %}
+        <a href="{{ url_for('new_thread', section_id=section.id) }}" class="btn btn-primary">
+            <i class="fas fa-plus me-1"></i>Новая тема
+        </a>
+        {% endif %}
+    </div>
+</div>
+{% if threads %}
+<div class="card">
+    <div class="card-header bg-accent">
+        <div class="row fw-bold">
+            <div class="col-md-6">Тема</div>
+            <div class="col-md-2">Автор</div>
+            <div class="col-md-2">Ответы</div>
+            <div class="col-md-2">Обновлено</div>
+        </div>
+    </div>
+    <div class="list-group list-group-flush">
+        {% for thread in threads %}
+        <div class="list-group-item">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <div class="d-flex align-items-center">
+                        {% if thread.is_pinned %}
+                        <i class="fas fa-thumbtack text-warning me-2" title="Закреплено"></i>
+                        {% endif %}
+                        {% if thread.is_locked %}
+                        <i class="fas fa-lock text-muted me-2" title="Закрыто"></i>
+                        {% endif %}
+                        <div>
+                            <a href="{{ url_for('thread', thread_id=thread.id) }}" 
+                               class="fw-bold text-decoration-none">
+                                {{ thread.title }}
+                            </a>
+                            <br>
+                            <small class="text-muted">
+                                Начал: {{ thread.author.username }} • 
+                                {{ thread.created_at.strftime('%d.%m.%Y %H:%M') }}
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="d-flex align-items-center">
+                        <img src="{{ url_for('static', filename='avatars/' + thread.author.avatar) }}" 
+                             class="avatar-small me-2" alt="Avatar">
+                        <span>{{ thread.author.username }}</span>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <span class="badge bg-secondary">{{ thread.posts.count() }}</span>
+                </div>
+                <div class="col-md-2">
+                    <small class="text-muted">
+                        {{ thread.updated_at.strftime('%d.%m.%Y %H:%M') }}
+                    </small>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% else %}
+<div class="card">
+    <div class="card-body text-center py-5">
+        <i class="fas fa-folder-open fa-3x text-muted mb-3"></i>
+        <h3 class="text-muted">В этом разделе пока нет тем</h3>
+        <p class="text-muted mb-4">Будьте первым, кто создаст тему в этом разделе!</p>
+        {% if current_user.is_authenticated %}
+        <a href="{{ url_for('new_thread', section_id=section.id) }}" class="btn btn-primary btn-lg">
+            <i class="fas fa-plus me-2"></i>Создать первую тему
+        </a>
+        {% else %}
+        <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg">
+            <i class="fas fa-sign-in-alt me-2"></i>Войдите, чтобы создать тему
+        </a>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+{% endblock %}

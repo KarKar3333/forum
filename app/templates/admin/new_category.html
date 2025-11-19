@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Новая категория - Админка{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0"><i class="fas fa-folder-plus me-2"></i>Создание категории</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="mb-3">
+                        {{ form.name.label(class="form-label") }}
+                        {{ form.name(class="form-control", placeholder="Введите название категории") }}
+                        {% if form.name.errors %}
+                        <div class="text-danger small">
+                            {% for error in form.name.errors %}
+                            <div>{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form.description.label(class="form-label") }}
+                        {{ form.description(class="form-control", rows=3, placeholder="Описание категории (необязательно)") }}
+                        {% if form.description.errors %}
+                        <div class="text-danger small">
+                            {% for error in form.description.errors %}
+                            <div>{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        {{ form.order.label(class="form-label") }}
+                        {{ form.order(class="form-control", placeholder="0") }}
+                        <div class="form-text">Чем меньше число, тем выше в списке</div>
+                        {% if form.order.errors %}
+                        <div class="text-danger small">
+                            {% for error in form.order.errors %}
+                            <div>{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="d-flex gap-2">
+                        {{ form.submit(class="btn btn-success") }}
+                        <a href="{{ url_for('admin_panel') }}" class="btn btn-secondary">Отмена</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
